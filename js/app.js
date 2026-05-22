@@ -722,10 +722,61 @@ document.addEventListener('DOMContentLoaded', () => {
       }).join('')}</div>`;
     }
 
+    const TRIBUTO_DESC = {
+      'Imposto Predial':                  'Cobrado anualmente sobre imóveis edificados (casas, comércios)',
+      'Imposto Territorial':              'Cobrado sobre terrenos urbanos sem construção',
+      'SIMPLES NACIONAL':                 'ISS de empresas optantes pelo regime Simples Nacional',
+      'ISS Variavel':                     'Prestadores de serviço avulsos — alíquota variável por atividade',
+      'Imp. Transmissão Bens Imóveis':    'Pago na compra e venda de imóveis urbanos',
+      'ITBI RURAL':                       'Pago na transferência de propriedades rurais',
+      'ISSQN RETIDO':                     'ISS retido na fonte pelo tomador do serviço',
+      'Taxa Licença de Funcionamento':    'Licença para abrir e operar estabelecimento comercial',
+      'Imposto de Renda Retido Fonte':    'IR retido nos pagamentos feitos pela prefeitura a servidores e fornecedores',
+      'Taxa de Aluguel':                  'Aluguéis de bens municipais cedidos a terceiros',
+      'MEI - Microempreendedor Indivi':   'Contribuição mensal do microempreendedor individual ao município',
+      'MEI - Microempreendedor Individual': 'Contribuição mensal do microempreendedor individual ao município',
+      'ISS VARIÁVEL':                     'ISS de serviços com alíquota variável (mesma base do ISS Variavel)',
+      'Alvará de Licença':                'Taxa para obtenção de alvará de funcionamento',
+      'Concessão de Terreno Cem. Municipal': 'Concessão de jazigos e terrenos no cemitério municipal',
+      'Tx Renov. VISA':                   'Renovação anual de licença sanitária (Vigilância Sanitária)',
+      'Multa':                            'Multas administrativas por infrações diversas',
+      'Confecçção de Tumulo':             'Serviço de construção de túmulos no cemitério municipal',
+      'Confecção de Tumulo':              'Serviço de construção de túmulos no cemitério municipal',
+      'Sepultamento/Inumação':            'Taxa cobrada pelo sepultamento no cemitério municipal',
+      'Tx Fiscaliz VISA':                 'Taxa de fiscalização sanitária de estabelecimentos',
+      'Certidão':                         'Emissão de certidões e documentos municipais',
+      'Expediente':                       'Taxa de expediente para tramitação de processos administrativos',
+      'EXUMAÇÃO':                         'Serviço de exumação de restos mortais no cemitério',
+      'Taxa Ocupação Espaço':             'Ocupação de espaço público por quiosques e similares',
+      'Retificação de Área':              'Taxa de retificação de área de imóvel no cadastro',
+      'Taxa de Localização art 59 CTM':   'Taxa de localização de estabelecimentos conforme Código Tributário',
+      'Habite-se':                        'Certificado de conclusão e habitabilidade de obra',
+      'Taxa Licença Ambulante':           'Licença para comércio ambulante nas vias públicas',
+      'Autorização de Obras Cemitério':   'Autorização para obras de reforma em jazigos',
+      'Motoniveladora':                   'Aluguel de motoniveladora para serviços rurais e de terraplanagem',
+      'VISA RT Inicial':                  'Registro inicial de Responsável Técnico na Vigilância Sanitária',
+      'TX ALTERACAO CADASTRAL':           'Taxa para alteração de dados no cadastro municipal',
+      'Aprovação de Projetos':            'Taxa para análise e aprovação de projetos de construção',
+      'Caminhão Pipa':                    'Aluguel de caminhão pipa para fornecimento de água',
+      'ENCERRAMENTO ATIVIDADE':           'Taxa de encerramento formal de atividade empresarial',
+      'Numerção Predial':                 'Atribuição oficial de número predial ao imóvel',
+      'Preço de Embarque':                'Tarifa cobrada no terminal rodoviário municipal',
+      'VISA Equip Renov':                 'Renovação de licença de equipamentos na Vigilância Sanitária',
+      'TRANSLADO':                        'Serviço de translado de restos mortais',
+      'Taxa NFSE Avulsa':                 'Taxa para emissão de Nota Fiscal de Serviço Eletrônica avulsa',
+      'TAXA LICENCA AMBULANTE':           'Licença para comércio ambulante (lançamento avulso)',
+      'VISA RT Subst':                    'Substituição de Responsável Técnico na Vigilância Sanitária',
+      'Honorario':                        'Honorários cobrados por serviços jurídicos ou técnicos municipais',
+      'Autorização de Obras':             'Taxa para autorização de obras na área urbana',
+      'Pá Carregadeira':                  'Aluguel de pá carregadeira para serviços de terraplenagem',
+      'Retroescavadeira':                 'Aluguel de retroescavadeira para obras e serviços públicos',
+      'I.S.S.Q.N.':                       'Imposto Sobre Serviços de Qualquer Natureza (lançamento avulso)',
+      'Restituição':                      'Devolução de valores pagos indevidamente ao município',
+    };
+
     const tbody = document.getElementById('recTributoBody');
     if (tbody) {
       const maxTributo = Math.max(...d.por_tributo.map(t => t.valor));
-      // Group by tipo to render section headers
       const grouped = {};
       d.por_tributo.forEach(t => { (grouped[t.tipo] = grouped[t.tipo] || []).push(t); });
       const tipoOrder = d.por_tipo.map(t => t.tipo);
@@ -737,7 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tipoColor = TIPO_COLORS[tipoOrder.indexOf(tipo) % TIPO_COLORS.length];
         const tipoTotal = items.reduce((s, t) => s + t.valor, 0);
         html += `<tr class="rec-group-header">
-          <td colspan="4">
+          <td colspan="5">
             <span class="rec-group-dot" style="background:${tipoColor}"></span>
             <strong>${tipo}</strong>
             <span class="rec-group-sub">${fmtBR(tipoTotal)} · ${((tipoTotal/total)*100).toFixed(1)}% do total</span>
@@ -747,9 +798,13 @@ document.addEventListener('DOMContentLoaded', () => {
           rank++;
           const barPct = (t.valor / maxTributo * 100).toFixed(1);
           const pct = ((t.valor / total) * 100).toFixed(2);
+          const desc = TRIBUTO_DESC[t.tributo] || '';
           html += `<tr class="rec-tributo-row">
             <td class="rec-rank">${rank}</td>
-            <td class="rec-tributo-name">${t.tributo}</td>
+            <td class="rec-tributo-name">
+              <span class="rec-trib-label">${t.tributo}</span>
+              ${desc ? `<span class="rec-trib-desc">${desc}</span>` : ''}
+            </td>
             <td class="rec-tributo-bar-cell">
               <div class="rec-inline-bar"><div class="rec-inline-fill" style="width:${barPct}%;background:${tipoColor}"></div></div>
             </td>

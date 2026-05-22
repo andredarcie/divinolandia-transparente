@@ -1719,3 +1719,6 @@
   .rec-tributo-bar-cell { display: none; }
   .rec-th-bar { display: none; }
 }
+
+.rec-trib-label { display: block; font-weight: 600; color: var(--ink); }
+.rec-trib-desc  { display: block; font-size: 0.75rem; color: #777; margin-top: 1px; line-height: 1.35; }
