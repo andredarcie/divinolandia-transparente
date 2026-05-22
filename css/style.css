@@ -1607,3 +1607,21 @@
 
     section, .section-head { page-break-inside: avoid; }
   }
+
+/* ── RECEITAS ─────────────────────────────────────────────────────── */
+.receitas-section { background: var(--white); border-radius: 12px; padding: 1.5rem 2rem; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 2rem; }
+
+.rec-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.2rem 0; }
+@media (max-width: 700px) { .rec-charts { grid-template-columns: 1fr; } }
+
+.rec-chart-block { background: var(--paper); border-radius: 10px; padding: 1rem; }
+.rec-chart-title { font-size: 0.82rem; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.8rem; }
+.rec-subtitle { font-size: 0.82rem; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 0.05em; margin: 1.2rem 0 0.6rem; }
+
+/* Bar chart */
+.rec-bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 140px; padding-bottom: 24px; position: relative; }
+.rec-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; }
+.rec-bar-wrap { flex: 1; display: flex; align-items: flex-end; width: 100%; }
+.rec-bar { width: 100%; background: var(--leaf); border-radius: 3px 3px 0 0; min-height: 2px; transition: opacity 0.2s; }
+.rec-bar:hover { opacity: 0.75; cursor: default; }
+.rec-bar-label { font-size: 0.62rem; color: #666; margin-top: 4px; white-space: nowrap; }

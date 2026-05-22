@@ -676,4 +676,65 @@ document.addEventListener('DOMContentLoaded', () => {
       ).join('');
     }
   })();
+
+  // ── RECEITAS ─────────────────────────────────────────────────────────
+  (() => {
+    const d = RECEITAS_DATA;
+    if (!d) return;
+
+    const total = d.por_tipo.reduce((s, t) => s + t.valor, 0);
+    const maior = d.por_tipo[0];
+
+    const statsEl = document.getElementById('recStats');
+    if (statsEl) {
+      statsEl.innerHTML = [
+        { label: 'Total Lançado (2025)', value: fmtBR(total), sub: `${d.por_mes.length} meses` },
+        { label: 'Maior Fonte', value: maior.tipo, sub: fmtBR(maior.valor) },
+        { label: 'Tipos de Receita', value: String(d.por_tipo.length), sub: 'categorias' },
+      ].map(c => `<div class="sal-stat-card"><div class="sal-stat-label">${c.label}</div><div class="sal-stat-value">${c.value}</div><div class="sal-stat-sub">${c.sub}</div></div>`).join('');
+    }
+
+    const TIPO_COLORS = ['#2563eb','#16a34a','#ea580c','#7c3aed','#0891b2','#be185d','#92400e'];
+    const tipoEl = document.getElementById('recTipoChart');
+    if (tipoEl) {
+      const cx = 90, cy = 90, R = 78, ri = 46, GAP = 1.5;
+      function xy(a, r) { const rad = (a-90)*Math.PI/180; return [cx+r*Math.cos(rad), cy+r*Math.sin(rad)]; }
+      let angle = 0;
+      const paths = d.por_tipo.map((t, i) => {
+        const sweep = (t.valor/total)*(360-GAP*d.por_tipo.length);
+        const a0 = angle+GAP/2, a1 = angle+sweep+GAP/2; angle += sweep+GAP;
+        const [ox1,oy1]=xy(a0,R),[ox2,oy2]=xy(a1,R),[ix2,iy2]=xy(a1,ri),[ix1,iy1]=xy(a0,ri);
+        const lg = a1-a0>180?1:0;
+        return `<path d="M${ox1} ${oy1} A${R} ${R} 0 ${lg} 1 ${ox2} ${oy2} L${ix2} ${iy2} A${ri} ${ri} 0 ${lg} 0 ${ix1} ${iy1}Z" fill="${TIPO_COLORS[i%TIPO_COLORS.length]}" opacity="0.92"><title>${t.tipo}: ${fmtBR(t.valor)}</title></path>`;
+      });
+      const legend = d.por_tipo.map((t,i) =>
+        `<div class="ac-legend-row"><span class="ac-dot" style="background:${TIPO_COLORS[i%TIPO_COLORS.length]}"></span><span class="ac-lbl">${t.tipo}</span><span class="ac-pct">${((t.valor/total)*100).toFixed(1)}%</span></div>`).join('');
+      tipoEl.innerHTML = `<div class="ac-media"><div class="ac-chart"><svg viewBox="0 0 180 180" width="180" height="180">${paths.join('')}<text x="90" y="86" text-anchor="middle" font-size="10" fill="#555">Total</text><text x="90" y="100" text-anchor="middle" font-size="9" fill="#333">${fmtBR(total)}</text></svg></div><div class="ac-legend">${legend}</div></div>`;
+    }
+
+    const mesEl = document.getElementById('recMesChart');
+    if (mesEl && d.por_mes.length) {
+      const maxMes = Math.max(...d.por_mes.map(m => m.valor));
+      const ABR = {JANEIRO:'Jan',FEVEREIRO:'Fev','MARÇO':'Mar',MARCO:'Mar',ABRIL:'Abr',MAIO:'Mai',JUNHO:'Jun',JULHO:'Jul',AGOSTO:'Ago',SETEMBRO:'Set',OUTUBRO:'Out',NOVEMBRO:'Nov',DEZEMBRO:'Dez'};
+      mesEl.innerHTML = `<div class="rec-bar-chart">${d.por_mes.map(m => {
+        const pct = (m.valor/maxMes*100).toFixed(1);
+        return `<div class="rec-bar-col"><div class="rec-bar-wrap"><div class="rec-bar" style="height:${pct}%" title="${fmtBR(m.valor)}"></div></div><div class="rec-bar-label">${ABR[m.mes]||m.mes.slice(0,3)}</div></div>`;
+      }).join('')}</div>`;
+    }
+
+    const tbody = document.getElementById('recTributoBody');
+    if (tbody) {
+      tbody.innerHTML = d.por_tributo.map(t =>
+        `<tr><td><span class="cat-chip" style="font-size:0.75rem">${t.tipo}</span></td><td>${t.tributo}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${fmtBR(t.valor)}</td><td style="text-align:right;color:#666">${((t.valor/total)*100).toFixed(2)}%</td></tr>`
+      ).join('');
+    }
+
+    document.getElementById('recExportBtn')?.addEventListener('click', () => {
+      exportCSV(
+        d.por_tributo.map(t => [t.tipo, t.tributo, t.valor, ((t.valor/total)*100).toFixed(2)+'%']),
+        ['Tipo','Tributo','Valor Lançado','% Total'],
+        `receitas_${d.ano}.csv`
+      );
+    });
+  })();
 });

@@ -93,6 +93,7 @@
       <a class="nav-link" href="#sec-salarios"><span>👤</span> Salários</a>
       <a class="nav-link" href="#sec-empenhos"><span>🛒</span> Empenhos</a>
       <a class="nav-link" href="#sec-diarias"><span>✈️</span> Diárias</a>
+      <a class="nav-link" href="#sec-receitas"><span>💰</span> Receitas</a>
     </div>
   </nav>
 
@@ -434,6 +435,47 @@
           </tr>
         </thead>
         <tbody id="viagensBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RECEITAS -->
+  <section class="receitas-section fade-in fade-in-4" id="sec-receitas">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Arrecadação Municipal 2025</div>
+        <h2 class="section-title">Receitas — O Que a Cidade Arrecadou</h2>
+      </div>
+      <button id="recExportBtn" class="sal-export-btn">⬇ CSV</button>
+    </div>
+
+    <div class="demo-notice">✅ Dados oficiais — Lançamentos extraídos do Portal de Transparência (PRONIM TB). Exercício 2025. Total: R$ 5,8 milhões lançados.</div>
+
+    <div class="sal-stats cols-3" id="recStats"></div>
+
+    <div class="rec-charts">
+      <div class="rec-chart-block">
+        <h3 class="rec-chart-title">Distribuição por Tipo de Receita</h3>
+        <div id="recTipoChart"></div>
+      </div>
+      <div class="rec-chart-block">
+        <h3 class="rec-chart-title">Evolução Mensal (R$)</h3>
+        <div id="recMesChart"></div>
+      </div>
+    </div>
+
+    <h3 class="rec-subtitle">Detalhamento por Tributo</h3>
+    <div style="overflow-x:auto;">
+      <table class="empenhos-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Tributo</th>
+            <th style="text-align:right;">Valor Lançado</th>
+            <th style="text-align:right;">% do Total</th>
+          </tr>
+        </thead>
+        <tbody id="recTributoBody"></tbody>
       </table>
     </div>
   </section>
