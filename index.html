@@ -1899,7 +1899,7 @@ function renderSalary(data, query = '', limit = Infinity) {
   empty.classList.remove('visible');
   counter.innerHTML = `<strong>${data.length}</strong> servidor${data.length !== 1 ? 'es' : ''}`;
 
-  tbody.innerHTML = slice.map((d, i) => {
+  tbody.innerHTML = salSlice.map((d, i) => {
     const liq = d.bruto - d.deducoes;
     const barW = (d.bruto / SALARY_MAX * 100).toFixed(1);
     const area = AREA_MAP[d.area] || { label: 'Outros', cls: 'tag-outros' };
