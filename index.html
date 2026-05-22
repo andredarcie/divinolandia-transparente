@@ -229,6 +229,7 @@
         <option value="pct">Ordenar: % Pago ↓</option>
       </select>
       <span class="result-count" id="resultCount"><strong>50</strong> resultados</span>
+      <button class="sal-export-btn" id="credExportBtn" title="Baixar dados em CSV">⬇ CSV</button>
     </div>
   </div>
 
@@ -255,7 +256,7 @@
     <div class="ver-mais-wrap"><button class="ver-mais-btn" id="vmCredores">Ver todos os 50 credores ↓</button></div>
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🔍</div>
-      <div class="empty-text">Nenhum credor encontrado para a busca.</div>
+      <div class="empty-text">Nenhum credor encontrado.<br><small>Tente outro termo de busca.</small></div>
     </div>
   </div>
 
@@ -348,7 +349,7 @@
       <div class="ver-mais-wrap"><button class="ver-mais-btn" id="vmSalarios">Ver todos os 493 servidores ↓</button></div>
       <div class="empty-state" id="salaryEmpty">
         <div class="empty-icon">🔍</div>
-        <div class="empty-text">Nenhum servidor encontrado.</div>
+        <div class="empty-text">Nenhum servidor encontrado.<br><small>Tente limpar os filtros ativos.</small></div>
       </div>
     </div>
   </section>
@@ -366,8 +367,11 @@
           <input class="search-input" type="text" id="empSearch" placeholder="Buscar fornecedor ou descrição…" autocomplete="off">
         </div>
         <span class="result-count" id="empCount"><strong>50</strong> empenhos</span>
+        <button class="sal-export-btn" id="empExportBtn" title="Baixar dados em CSV">⬇ CSV</button>
       </div>
     </div>
+
+    <div class="sal-stats" id="empStats"></div>
 
     <div class="demo-notice">
       ✅ <strong>Dados oficiais</strong> — Extraídos do <a href="https://webapp1-divinolandia.cidade360.cloud/pronimtb/" target="_blank" style="color:#7A5000;font-weight:600;">Portal de Transparência</a>. Inclui empenhos de 2026 e restos a pagar de 2025. Última atualização: 21/05/2026.
@@ -392,7 +396,7 @@
       <div class="ver-mais-wrap"><button class="ver-mais-btn" id="vmEmpenhos">Ver todos os empenhos ↓</button></div>
       <div class="empty-state" id="empEmpty" style="display:none;">
         <div class="empty-icon">🔍</div>
-        <div class="empty-text">Nenhum empenho encontrado.</div>
+        <div class="empty-text">Nenhum empenho encontrado.<br><small>Tente outro filtro ou termo de busca.</small></div>
       </div>
     </div>
   </section>

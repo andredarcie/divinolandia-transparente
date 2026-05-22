@@ -285,29 +285,72 @@ function renderSalaryStats(data) {
     </div>`).join('');
 }
 
-// ── EXPORT CSV ────────────────────────────────────────
-function exportSalaryCSV(data) {
-  const BOM = '﻿';
-  const headers = ['Nome', 'Cargo', 'Área', 'Secretaria', 'Bruto', 'Deduções', 'Líquido', 'Tipo'];
-  const rows = data.map(d => [
-    d.nome,
-    d.cargo,
-    (AREA_MAP[d.area] || {}).label || d.area,
-    d.secretaria,
-    d.bruto.toFixed(2).replace('.', ','),
-    d.deducoes.toFixed(2).replace('.', ','),
-    (d.bruto - d.deducoes).toFixed(2).replace('.', ','),
-    d.tipo,
-  ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(';'));
+// ── EMPENHOS STATS ───────────────────────────────────
+function renderEmpStats(data) {
+  const el = document.getElementById('empStats');
+  if (!el || !data.length) { if (el) el.innerHTML = ''; return; }
 
-  const csv = BOM + [headers.join(';'), ...rows].join('\r\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const total = data.reduce((s, d) => s + d.valor, 0);
+  const media = total / data.length;
+
+  const catTotals = {};
+  data.forEach(d => { catTotals[d.categoria] = (catTotals[d.categoria] || 0) + d.valor; });
+  const topCat   = Object.entries(catTotals).sort((a, b) => b[1] - a[1])[0];
+  const topPct   = (topCat[1] / total * 100).toFixed(0);
+
+  const cards = [
+    { label: 'Total empenhado',   value: fmtBR(total),      sub: `${data.length} empenho${data.length !== 1 ? 's' : ''}` },
+    { label: 'Média por empenho', value: fmtBR(media),      sub: 'valor médio empenhado'                                  },
+    { label: 'Maior categoria',   value: topCat[0],         sub: `${fmtBR(topCat[1])} · ${topPct}% do total`             },
+  ];
+
+  el.className = 'sal-stats cols-3';
+  el.innerHTML = cards.map(c => `
+    <div class="sal-stat-card">
+      <span class="sal-stat-label">${c.label}</span>
+      <span class="sal-stat-value">${c.value}</span>
+      <span class="sal-stat-sub">${c.sub}</span>
+    </div>`).join('');
+}
+
+// ── EXPORT CSV ────────────────────────────────────────
+function exportCSV(rows, headers, filename) {
+  const BOM = '﻿';
+  const escape = v => `"${String(v).replace(/"/g, '""')}"`;
+  const lines  = [headers.map(escape).join(';'),
+                  ...rows.map(r => r.map(escape).join(';'))];
+  const blob = new Blob([BOM + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = 'salarios-divinolandia.csv';
+  const a    = Object.assign(document.createElement('a'), { href: url, download: filename });
   a.click();
   URL.revokeObjectURL(url);
+}
+
+function exportSalaryCSV(data) {
+  exportCSV(
+    data.map(d => [d.nome, d.cargo, (AREA_MAP[d.area] || {}).label || d.area,
+                   d.secretaria, d.bruto.toFixed(2).replace('.', ','),
+                   d.deducoes.toFixed(2).replace('.', ','),
+                   (d.bruto - d.deducoes).toFixed(2).replace('.', ','), d.tipo]),
+    ['Nome', 'Cargo', 'Área', 'Secretaria', 'Bruto', 'Deduções', 'Líquido', 'Tipo'],
+    'salarios-divinolandia.csv'
+  );
+}
+
+function exportCredoresCSV(data) {
+  exportCSV(
+    data.map(d => [d.nome, d.cnpj, d.empenhado, d.pago]),
+    ['Credor', 'CNPJ', 'Empenhado', 'Pago'],
+    'credores-divinolandia.csv'
+  );
+}
+
+function exportEmpenhosCSV(data) {
+  exportCSV(
+    data.map(d => [d.categoria, d.credor, d.descricao || '', d.valor.toFixed(2).replace('.', ','), d.fonte || '']),
+    ['Categoria', 'Credor', 'Descrição', 'Valor', 'Fonte'],
+    'empenhos-divinolandia.csv'
+  );
 }
 
 // ── AREA PIE CHART ───────────────────────────────────
@@ -413,10 +456,16 @@ document.addEventListener('DOMContentLoaded', () => {
   currentData = sortData(DATA, sortKey);
   renderTablePaged(currentData, searchQuery);
 
-  document.getElementById('searchInput').addEventListener('input', e => {
+  document.getElementById('credExportBtn').addEventListener('click', () => exportCredoresCSV(currentData));
+
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', e => {
     searchQuery = e.target.value.trim();
     currentData = sortData(filterData(DATA, searchQuery), sortKey);
     renderTablePaged(currentData, searchQuery);
+  });
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { searchInput.value = ''; searchInput.dispatchEvent(new Event('input')); }
   });
 
   const sortSelect = document.getElementById('sortSelect');
@@ -511,6 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     faixaSel.addEventListener('change', e => { sFaixa = e.target.value; refresh(); });
     salarySearch.addEventListener('input', e => { sQuery = e.target.value.trim(); refresh(); });
+    salarySearch.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { salarySearch.value = ''; sQuery = ''; refresh(); }
+    });
     clearBtn.addEventListener('click', resetAll);
     document.getElementById('salExportBtn').addEventListener('click', () => exportSalaryCSV(getFiltered()));
 
@@ -552,7 +604,11 @@ document.addEventListener('DOMContentLoaded', () => {
       : EMPENHOS_DATA;
 
     const renderEmpPaged = withPaging(renderEmpenhos, 'vmEmpenhos', 'Ver todos os empenhos');
-    const refresh = () => renderEmpPaged(getFiltered(), empQuery);
+    const refresh = () => {
+      const filtered = getFiltered();
+      renderEmpPaged(filtered, empQuery);
+      renderEmpStats(filtered);
+    };
 
     filtersEl.addEventListener('click', e => {
       const btn = e.target.closest('.cat-btn');
@@ -564,7 +620,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const empSearchEl = document.getElementById('empSearch');
-    if (empSearchEl) empSearchEl.addEventListener('input', e => { empQuery = e.target.value; refresh(); });
+    if (empSearchEl) {
+      empSearchEl.addEventListener('input', e => { empQuery = e.target.value; refresh(); });
+      empSearchEl.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { empSearchEl.value = ''; empQuery = ''; refresh(); }
+      });
+    }
+
+    document.getElementById('empExportBtn')?.addEventListener('click', () => exportEmpenhosCSV(getFiltered()));
 
     refresh();
   })();
