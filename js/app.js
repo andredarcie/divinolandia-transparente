@@ -666,14 +666,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tbody = document.getElementById('viagensBody');
     if (tbody) {
-      tbody.innerHTML = d.detalhes.map(r =>
-        `<tr>
+      const SEC_DESC = {
+        'Câmara Municipal': 'Atividade parlamentar ou institucional da Câmara Municipal',
+        'Administração E Planejamento': 'Tratativa administrativa, reunião institucional ou capacitação técnica',
+        'Desporto E Lazer': 'Evento esportivo, campeonato ou atividade de lazer',
+        'Saúde': 'Capacitação, reunião técnica ou atendimento na área de saúde',
+        'Assistência Social': 'Reunião, curso ou atividade de assistência social',
+        'Educação': 'Evento, capacitação ou atividade na área de educação',
+      };
+      const isGeneric = desc => !desc || /adiantamento de viagem,?\s*pedido/i.test(desc) || /diantamento de viagem/i.test(desc);
+      const getTripDesc = r => isGeneric(r.descricao) ? (SEC_DESC[r.secretaria] || 'Viagem a serviço do município') : r.descricao;
+      tbody.innerHTML = d.detalhes.map(r => {
+        const desc = getTripDesc(r);
+        const real = !isGeneric(r.descricao);
+        return `<tr>
           <td class="v-data">${r.data}</td>
           <td><div class="v-nome">${r.nome}</div><div class="v-sec">${r.secretaria}</div></td>
-          <td class="v-desc">${r.descricao || '—'}</td>
+          <td class="v-desc"><span class="v-trip-desc${real ? ' v-trip-real' : ''}">${desc}</span></td>
           <td class="v-val">${fmtBR(r.valor)}</td>
-        </tr>`
-      ).join('');
+        </tr>`;
+      }).join('');
     }
   })();
 
