@@ -724,9 +724,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tbody = document.getElementById('recTributoBody');
     if (tbody) {
-      tbody.innerHTML = d.por_tributo.map(t =>
-        `<tr><td><span class="cat-chip" style="font-size:0.75rem">${t.tipo}</span></td><td>${t.tributo}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${fmtBR(t.valor)}</td><td style="text-align:right;color:#666">${((t.valor/total)*100).toFixed(2)}%</td></tr>`
-      ).join('');
+      const maxTributo = Math.max(...d.por_tributo.map(t => t.valor));
+      // Group by tipo to render section headers
+      const grouped = {};
+      d.por_tributo.forEach(t => { (grouped[t.tipo] = grouped[t.tipo] || []).push(t); });
+      const tipoOrder = d.por_tipo.map(t => t.tipo);
+      let rank = 0;
+      let html = '';
+      tipoOrder.forEach(tipo => {
+        const items = grouped[tipo];
+        if (!items) return;
+        const tipoColor = TIPO_COLORS[tipoOrder.indexOf(tipo) % TIPO_COLORS.length];
+        const tipoTotal = items.reduce((s, t) => s + t.valor, 0);
+        html += `<tr class="rec-group-header">
+          <td colspan="4">
+            <span class="rec-group-dot" style="background:${tipoColor}"></span>
+            <strong>${tipo}</strong>
+            <span class="rec-group-sub">${fmtBR(tipoTotal)} · ${((tipoTotal/total)*100).toFixed(1)}% do total</span>
+          </td>
+        </tr>`;
+        items.forEach(t => {
+          rank++;
+          const barPct = (t.valor / maxTributo * 100).toFixed(1);
+          const pct = ((t.valor / total) * 100).toFixed(2);
+          html += `<tr class="rec-tributo-row">
+            <td class="rec-rank">${rank}</td>
+            <td class="rec-tributo-name">${t.tributo}</td>
+            <td class="rec-tributo-bar-cell">
+              <div class="rec-inline-bar"><div class="rec-inline-fill" style="width:${barPct}%;background:${tipoColor}"></div></div>
+            </td>
+            <td class="rec-tributo-val">${fmtBR(t.valor)}</td>
+            <td class="rec-tributo-pct">${pct}%</td>
+          </tr>`;
+        });
+      });
+      tbody.innerHTML = html;
     }
 
     document.getElementById('recExportBtn')?.addEventListener('click', () => {

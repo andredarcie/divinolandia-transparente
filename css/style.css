@@ -1625,3 +1625,97 @@
 .rec-bar { width: 100%; background: var(--leaf); border-radius: 3px 3px 0 0; min-height: 2px; transition: opacity 0.2s; }
 .rec-bar:hover { opacity: 0.75; cursor: default; }
 .rec-bar-label { font-size: 0.62rem; color: #666; margin-top: 4px; white-space: nowrap; }
+
+/* ── RECEITAS TABLE ───────────────────────────────────────────────── */
+.rec-tributo-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+
+.rec-tributo-table thead th {
+  padding: 0.55rem 0.75rem;
+  background: var(--forest);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.rec-th-rank  { width: 36px; text-align: center; }
+.rec-th-bar   { width: 160px; }
+.rec-th-val   { text-align: right; width: 130px; }
+.rec-th-pct   { text-align: right; width: 72px; }
+
+/* Group header row */
+.rec-group-header td {
+  padding: 0.65rem 0.75rem 0.4rem;
+  background: var(--mint);
+  border-top: 2px solid var(--leaf);
+  font-size: 0.8rem;
+  color: var(--forest);
+  vertical-align: middle;
+}
+.rec-group-header:first-child td { border-top: none; }
+.rec-group-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-right: 0.45rem;
+  vertical-align: middle;
+}
+.rec-group-sub {
+  margin-left: 0.5rem;
+  font-weight: 400;
+  color: #4a7a5a;
+  font-size: 0.78rem;
+}
+
+/* Data rows */
+.rec-tributo-row { border-bottom: 1px solid #eee; }
+.rec-tributo-row:hover { background: #f5faf7; }
+
+.rec-rank {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  padding: 0.5rem 0.25rem;
+  width: 36px;
+}
+.rec-tributo-name {
+  padding: 0.5rem 0.75rem;
+  color: var(--ink);
+  max-width: 260px;
+}
+.rec-tributo-bar-cell { padding: 0.5rem 0.5rem; }
+.rec-inline-bar {
+  height: 8px;
+  background: #e8f0eb;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 80px;
+}
+.rec-inline-fill {
+  height: 100%;
+  border-radius: 4px;
+  opacity: 0.85;
+  transition: width 0.4s ease;
+}
+.rec-tributo-val {
+  text-align: right;
+  padding: 0.5rem 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--forest);
+  white-space: nowrap;
+}
+.rec-tributo-pct {
+  text-align: right;
+  padding: 0.5rem 0.75rem;
+  color: #666;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .rec-tributo-bar-cell { display: none; }
+  .rec-th-bar { display: none; }
+}
