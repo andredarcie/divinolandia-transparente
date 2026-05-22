@@ -836,4 +836,82 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
   })();
+
+  // ── DESPESAS ─────────────────────────────────────────────────────────
+  (() => {
+    const d = DESPESAS_DATA;
+    if (!d) return;
+
+    const pct = (d.total_pago / d.total_empenhado * 100).toFixed(1);
+
+    const statsEl = document.getElementById('despStats');
+    if (statsEl) {
+      statsEl.innerHTML = [
+        { label: 'Total Empenhado (2025)', value: fmtBR(d.total_empenhado), sub: `${d.por_funcao.length} áreas de atuação` },
+        { label: 'Total Pago', value: fmtBR(d.total_pago), sub: `${pct}% do empenhado` },
+        { label: 'Credores / Fornecedores', value: `${d.por_credor.length}+`, sub: 'empresas e servidores' },
+      ].map(c => `<div class="sal-stat-card"><div class="sal-stat-label">${c.label}</div><div class="sal-stat-value">${c.value}</div><div class="sal-stat-sub">${c.sub}</div></div>`).join('');
+    }
+
+    // Gráfico horizontal por função
+    const funcaoEl = document.getElementById('despFuncaoChart');
+    if (funcaoEl) {
+      const maxEmp = d.por_funcao[0].empenhado;
+      funcaoEl.innerHTML = d.por_funcao.map(f => {
+        const wEmp  = (f.empenhado / maxEmp * 100).toFixed(1);
+        const wPago = (f.pago      / maxEmp * 100).toFixed(1);
+        return `<div class="desp-func-row">
+          <span class="desp-func-nome">${f.funcao}</span>
+          <div class="desp-func-bars">
+            <div class="desp-func-bar-emp"  style="width:0" data-w="${wEmp}"></div>
+            <div class="desp-func-bar-pago" style="width:0" data-w="${wPago}"></div>
+          </div>
+          <span class="desp-func-val">${fmtBR(f.empenhado)}</span>
+        </div>`;
+      }).join('');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        funcaoEl.querySelectorAll('[data-w]').forEach(el => { el.style.width = el.dataset.w + '%'; });
+      }));
+    }
+
+    // Gráfico mensal duplo (empenhado + pago)
+    const mesEl = document.getElementById('despMesChart');
+    if (mesEl) {
+      const maxM = Math.max(...d.por_mes.map(m => m.empenhado));
+      const cols = d.por_mes.map(m => {
+        const hE = Math.max(2, (m.empenhado / maxM * 120)).toFixed(1);
+        const hP = Math.max(1, (m.pago      / maxM * 120)).toFixed(1);
+        return `<div class="desp-mes-col">
+          <div class="desp-mes-bars">
+            <div class="desp-mes-bar-emp"  style="height:0" data-h="${hE}" title="${m.mes}: ${fmtBR(m.empenhado)}"></div>
+            <div class="desp-mes-bar-pago" style="height:0" data-h="${hP}" title="${m.mes} pago: ${fmtBR(m.pago)}"></div>
+          </div>
+          <div class="desp-mes-label">${m.mes}</div>
+        </div>`;
+      }).join('');
+      mesEl.innerHTML = `<div class="desp-mes-chart">${cols}</div>
+        <div class="desp-mes-legend"><span class="desp-leg-dot desp-leg-emp"></span>Empenhado&nbsp;&nbsp;<span class="desp-leg-dot desp-leg-pago"></span>Pago</div>`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        mesEl.querySelectorAll('[data-h]').forEach(el => { el.style.height = el.dataset.h + 'px'; });
+      }));
+    }
+
+    // Tabela top credores
+    const credEl = document.getElementById('despCredBody');
+    if (credEl) {
+      const maxCred = d.por_credor[0].empenhado;
+      credEl.innerHTML = d.por_credor.map((c, i) => {
+        const barW  = (c.empenhado / maxCred * 100).toFixed(1);
+        const pagoP = (c.pago / c.empenhado * 100).toFixed(0);
+        return `<tr class="desp-cred-row">
+          <td class="desp-rank">${i + 1}</td>
+          <td class="desp-cred-nome">${c.credor}</td>
+          <td class="desp-cred-bar-cell"><div class="desp-inline-bar"><div class="desp-inline-fill" style="width:${barW}%"></div></div></td>
+          <td class="desp-cred-val">${fmtBR(c.empenhado)}</td>
+          <td class="desp-cred-pago"><span class="desp-pago-pct">${pagoP}%</span></td>
+          <td class="desp-cred-n">${c.empenhos}</td>
+        </tr>`;
+      }).join('');
+    }
+  })();
 });

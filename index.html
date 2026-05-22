@@ -94,6 +94,7 @@
       <a class="nav-link" href="#sec-empenhos"><span>🛒</span> Empenhos</a>
       <a class="nav-link" href="#sec-diarias"><span>✈️</span> Diárias</a>
       <a class="nav-link" href="#sec-receitas"><span>💰</span> Receitas</a>
+      <a class="nav-link" href="#sec-despesas"><span>📊</span> Despesas</a>
     </div>
   </nav>
 
@@ -477,6 +478,49 @@
           </tr>
         </thead>
         <tbody id="recTributoBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- DESPESAS -->
+  <section class="desp-section fade-in fade-in-4" id="sec-despesas">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Orçamento Municipal 2025</div>
+        <h2 class="section-title">Despesas — Para Onde Vai o Dinheiro</h2>
+      </div>
+    </div>
+
+    <div class="demo-notice">✅ <strong>Dados oficiais</strong> — 5.306 empenhos extraídos do <a href="https://webapp1-divinolandia.cidade360.cloud/pronimtb/" target="_blank" style="color:#7A5000;font-weight:600;">Portal de Transparência</a>. Exercício 2025.</div>
+
+    <div class="sal-stats cols-3" id="despStats"></div>
+
+    <div class="desp-charts">
+      <div class="desp-chart-block">
+        <h3 class="desp-chart-title">Por Área de Atuação (R$)</h3>
+        <div id="despFuncaoChart"></div>
+      </div>
+      <div class="desp-chart-block">
+        <h3 class="desp-chart-title">Evolução Mensal (R$)</h3>
+        <div id="despMesChart"></div>
+      </div>
+    </div>
+
+    <h3 class="desp-subtitle">Top Credores / Fornecedores</h3>
+    <div style="overflow-x:auto;">
+      <table class="desp-cred-table">
+        <thead>
+          <tr>
+            <th class="desp-th-rank">#</th>
+            <th>Credor / Fornecedor</th>
+            <th class="desp-th-bar"></th>
+            <th class="desp-th-val">Empenhado</th>
+            <th class="desp-th-val">Pago</th>
+            <th class="desp-th-n">Empenhos</th>
+          </tr>
+        </thead>
+        <tbody id="despCredBody"></tbody>
       </table>
     </div>
   </section>

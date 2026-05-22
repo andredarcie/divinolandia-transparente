@@ -1724,3 +1724,52 @@
 
 .rec-trib-label { display: block; font-weight: 600; color: var(--ink); }
 .rec-trib-desc  { display: block; font-size: 0.75rem; color: #777; margin-top: 1px; line-height: 1.35; }
+
+/* ── DESPESAS ─────────────────────────────────────────────────────────── */
+.desp-section { background: #fff; border-radius: 16px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+.desp-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+@media (max-width: 700px) { .desp-charts { grid-template-columns: 1fr; } }
+.desp-chart-block { background: #f8f9fa; border-radius: 10px; padding: 1rem 1.2rem; }
+.desp-chart-title { font-size: 0.82rem; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.8rem; }
+.desp-subtitle { font-size: 0.82rem; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.6rem; }
+
+/* Barras por funcao */
+.desp-func-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.45rem; }
+.desp-func-nome { flex: 0 0 120px; font-size: 0.75rem; color: #444; text-align: right; }
+.desp-func-bars { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.desp-func-bar-emp, .desp-func-bar-pago { height: 8px; border-radius: 4px; transition: width 0.7s ease; min-width: 2px; }
+.desp-func-bar-emp  { background: #2563eb; }
+.desp-func-bar-pago { background: #93c5fd; }
+.desp-func-val { flex: 0 0 90px; font-size: 0.72rem; font-weight: 600; color: #1a1a2e; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Gráfico mensal */
+.desp-mes-chart { display: flex; align-items: flex-end; gap: 4px; height: 130px; }
+.desp-mes-col { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.desp-mes-bars { display: flex; align-items: flex-end; gap: 2px; width: 100%; justify-content: center; }
+.desp-mes-bar-emp, .desp-mes-bar-pago { width: 48%; border-radius: 3px 3px 0 0; transition: height 0.7s ease; min-height: 1px; }
+.desp-mes-bar-emp  { background: #2563eb; }
+.desp-mes-bar-pago { background: #93c5fd; }
+.desp-mes-label { font-size: 0.62rem; color: #888; margin-top: 3px; }
+.desp-mes-legend { font-size: 0.7rem; color: #666; margin-top: 0.5rem; display: flex; align-items: center; gap: 0.3rem; }
+.desp-leg-dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+.desp-leg-emp  { background: #2563eb; }
+.desp-leg-pago { background: #93c5fd; }
+
+/* Tabela de credores */
+.desp-cred-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.desp-cred-table thead th { padding: 0.5rem 0.6rem; font-size: 0.72rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
+.desp-cred-row td { padding: 0.45rem 0.6rem; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+.desp-cred-row:hover { background: #f9fafb; }
+.desp-rank { color: #aaa; font-size: 0.72rem; width: 28px; text-align: center; }
+.desp-cred-nome { color: #1a1a2e; font-weight: 500; max-width: 240px; }
+.desp-cred-bar-cell { min-width: 80px; }
+.desp-inline-bar { background: #e5e7eb; border-radius: 3px; height: 6px; overflow: hidden; }
+.desp-inline-fill { background: #2563eb; height: 100%; border-radius: 3px; transition: width 0s; }
+.desp-cred-val { font-weight: 700; color: #1a1a2e; white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+.desp-cred-pago { text-align: center; }
+.desp-pago-pct { display: inline-block; font-size: 0.7rem; color: #16a34a; font-weight: 600; }
+.desp-cred-n { text-align: center; color: #888; font-size: 0.72rem; }
+.desp-th-rank { width: 32px; text-align: center; }
+.desp-th-bar  { min-width: 80px; }
+.desp-th-val  { text-align: right; white-space: nowrap; }
+.desp-th-n    { text-align: center; width: 70px; }
