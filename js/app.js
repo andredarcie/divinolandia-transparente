@@ -837,6 +837,97 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   })();
 
+  // ── CONDERG ───────────────────────────────────────────────────────────
+  (() => {
+    const d = CONDERG_DATA;
+    if (!d) return;
+
+    const compEl = document.getElementById('condergCompetencia');
+    if (compEl) compEl.textContent = d.competencia;
+
+    const statsEl = document.getElementById('condergStats');
+    if (statsEl) {
+      statsEl.innerHTML = [
+        { label: 'Folha Total',       value: fmtBR(d.total_salarios),  sub: d.competencia },
+        { label: 'Servidores',        value: String(d.total_servidores), sub: 'Hospital + SAMU Divinolândia' },
+        { label: 'Média Salarial',    value: fmtBR(d.media_salarial),  sub: 'por servidor' },
+        { label: 'Maior Salário',     value: fmtBR(d.detalhes[0]?.salario || 0), sub: d.detalhes[0]?.cargo || '' },
+      ].map(c => `<div class="sal-stat-card"><div class="sal-stat-label">${c.label}</div><div class="sal-stat-value">${c.value}</div><div class="sal-stat-sub">${c.sub}</div></div>`).join('');
+    }
+
+    // Faixas salariais
+    const faixasEl = document.getElementById('condergFaixas');
+    if (faixasEl) {
+      const maxF = Math.max(...d.faixas.map(f => f.count));
+      const FAIXA_COLORS = ['#93c5fd','#60a5fa','#3b82f6','#2563eb','#1d4ed8'];
+      faixasEl.innerHTML = d.faixas.map((f, i) => {
+        const pct = (f.count / maxF * 100).toFixed(1);
+        const servPct = (f.count / d.total_servidores * 100).toFixed(1);
+        return `<div class="conderg-faixa-row">
+          <span class="conderg-faixa-label">${f.faixa}</span>
+          <div class="conderg-faixa-track">
+            <div class="conderg-faixa-fill" style="width:0;background:${FAIXA_COLORS[i]}" data-w="${pct}"></div>
+          </div>
+          <span class="conderg-faixa-val">${f.count} <small>(${servPct}%)</small></span>
+        </div>`;
+      }).join('');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        faixasEl.querySelectorAll('[data-w]').forEach(el => { el.style.width = el.dataset.w + '%'; });
+      }));
+    }
+
+    // Top setores
+    const setoresEl = document.getElementById('condergSetores');
+    if (setoresEl) {
+      const top10 = d.por_setor.slice(0, 10);
+      const maxS = top10[0].total;
+      setoresEl.innerHTML = top10.map(s => {
+        const pct = (s.total / maxS * 100).toFixed(1);
+        return `<div class="conderg-setor-row">
+          <span class="conderg-setor-nome" title="${s.setor}">${s.setor}</span>
+          <div class="conderg-setor-track">
+            <div class="conderg-setor-fill" style="width:0" data-w="${pct}"></div>
+          </div>
+          <span class="conderg-setor-val">${fmtBR(s.total)}</span>
+        </div>`;
+      }).join('');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        setoresEl.querySelectorAll('[data-w]').forEach(el => { el.style.width = el.dataset.w + '%'; });
+      }));
+    }
+
+    // Cargos grid
+    const cargosEl = document.getElementById('condergCargos');
+    if (cargosEl) {
+      const maxC = d.por_cargo[0].total;
+      cargosEl.innerHTML = d.por_cargo.map(c => {
+        const pct = (c.total / maxC * 100).toFixed(1);
+        const med = c.servidores > 0 ? fmtBR(c.total / c.servidores) : '—';
+        return `<div class="conderg-cargo-card">
+          <div class="conderg-cargo-name">${c.cargo}</div>
+          <div class="conderg-cargo-bar-wrap"><div class="conderg-cargo-bar" style="width:0" data-w="${pct}"></div></div>
+          <div class="conderg-cargo-meta">${c.servidores} serv · média ${med}</div>
+          <div class="conderg-cargo-total">${fmtBR(c.total)}</div>
+        </div>`;
+      }).join('');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        cargosEl.querySelectorAll('[data-w]').forEach(el => { el.style.width = el.dataset.w + '%'; });
+      }));
+    }
+
+    // Tabela de detalhes
+    const detEl = document.getElementById('condergDetBody');
+    if (detEl) {
+      detEl.innerHTML = d.detalhes.map((r, i) => `<tr>
+        <td class="th-s-rank">${i + 1}</td>
+        <td class="sal-nome"><div class="sal-nome-main">${r.nome}</div></td>
+        <td class="sal-cargo">${r.cargo}</td>
+        <td class="sal-cargo" style="color:#555">${r.setor}</td>
+        <td class="sal-bruto">${fmtBR(r.salario)}</td>
+      </tr>`).join('');
+    }
+  })();
+
   // ── DESPESAS ─────────────────────────────────────────────────────────
   (() => {
     const d = DESPESAS_DATA;

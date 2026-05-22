@@ -95,6 +95,7 @@
       <a class="nav-link" href="#sec-diarias"><span>✈️</span> Diárias</a>
       <a class="nav-link" href="#sec-receitas"><span>💰</span> Receitas</a>
       <a class="nav-link" href="#sec-despesas"><span>📊</span> Despesas</a>
+      <a class="nav-link" href="#sec-conderg"><span>🏥</span> CONDERG</a>
     </div>
   </nav>
 
@@ -521,6 +522,52 @@
           </tr>
         </thead>
         <tbody id="despCredBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CONDERG SECTION -->
+  <section class="conderg-section fade-in fade-in-4" id="sec-conderg">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Entidade regional de saúde</div>
+        <h2 class="section-title">Salários — Hospital Regional de Divinolândia (CONDERG)</h2>
+      </div>
+    </div>
+
+    <div class="demo-notice">
+      🏥 <strong>Dados oficiais CONDERG</strong> — Extraídos do <a href="https://condergdivinolandia.geosiap.net.br/conderg/websis/portal_transparencia/financeiro/contas_publicas/index.php?consulta=../lei_acesso/lai_remuneracoes" target="_blank" style="color:#7A5000;font-weight:600;">Portal de Transparência do CONDERG</a> (GeoSIAP). Inclui Hospital Regional de Divinolândia e SAMU Divinolândia. Competência: <strong id="condergCompetencia"></strong>.
+    </div>
+
+    <div class="sal-stats" id="condergStats"></div>
+
+    <div class="conderg-charts">
+      <div class="conderg-chart-card">
+        <h3 class="conderg-chart-title">Distribuição por Faixa Salarial</h3>
+        <div id="condergFaixas"></div>
+      </div>
+      <div class="conderg-chart-card">
+        <h3 class="conderg-chart-title">Top 10 Setores por Folha</h3>
+        <div id="condergSetores"></div>
+      </div>
+    </div>
+
+    <h3 class="conderg-sub-title">Distribuição por Cargo</h3>
+    <div class="conderg-cargo-grid" id="condergCargos"></div>
+
+    <h3 class="conderg-sub-title">Maiores Salários</h3>
+    <div class="salary-table-wrap">
+      <table class="salary-table conderg-table">
+        <thead>
+          <tr>
+            <th class="th-s-rank">#</th>
+            <th class="th-s-name">Servidor</th>
+            <th class="th-s-cargo">Cargo</th>
+            <th>Setor</th>
+            <th class="th-s-bruto">Salário</th>
+          </tr>
+        </thead>
+        <tbody id="condergDetBody"></tbody>
       </table>
     </div>
   </section>

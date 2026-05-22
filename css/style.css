@@ -1773,3 +1773,38 @@
 .desp-th-bar  { min-width: 80px; }
 .desp-th-val  { text-align: right; white-space: nowrap; }
 .desp-th-n    { text-align: center; width: 70px; }
+
+/* ── CONDERG SECTION ──────────────────────────────── */
+.conderg-section { background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,.07); margin-bottom: 2rem; }
+.conderg-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+@media (max-width: 768px) { .conderg-charts { grid-template-columns: 1fr; } }
+.conderg-chart-card { background: #f8fafc; border-radius: 10px; padding: 1.2rem; }
+.conderg-chart-title { font-size: 0.85rem; font-weight: 700; color: #374151; margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.conderg-sub-title { font-size: 0.9rem; font-weight: 700; color: #374151; margin: 1.5rem 0 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; border-top: 1px solid #e5e7eb; padding-top: 1rem; }
+
+/* Faixas */
+.conderg-faixa-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.55rem; }
+.conderg-faixa-label { font-size: 0.75rem; color: #555; width: 80px; flex-shrink: 0; }
+.conderg-faixa-track { flex: 1; background: #e5e7eb; border-radius: 4px; height: 16px; overflow: hidden; }
+.conderg-faixa-fill { height: 100%; border-radius: 4px; transition: width 0.7s ease; }
+.conderg-faixa-val { font-size: 0.75rem; color: #374151; font-weight: 600; width: 80px; text-align: right; white-space: nowrap; }
+.conderg-faixa-val small { font-weight: 400; color: #888; }
+
+/* Setores */
+.conderg-setor-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.45rem; }
+.conderg-setor-nome { font-size: 0.7rem; color: #555; width: 150px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.conderg-setor-track { flex: 1; background: #e5e7eb; border-radius: 4px; height: 12px; overflow: hidden; }
+.conderg-setor-fill { height: 100%; background: #10b981; border-radius: 4px; transition: width 0.7s ease; }
+.conderg-setor-val { font-size: 0.72rem; color: #374151; font-weight: 600; width: 90px; text-align: right; white-space: nowrap; }
+
+/* Cargos grid */
+.conderg-cargo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+.conderg-cargo-card { background: #f8fafc; border-radius: 8px; padding: 0.8rem; border: 1px solid #e5e7eb; }
+.conderg-cargo-name { font-size: 0.78rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.4rem; }
+.conderg-cargo-bar-wrap { background: #e5e7eb; border-radius: 3px; height: 6px; overflow: hidden; margin-bottom: 0.35rem; }
+.conderg-cargo-bar { height: 100%; background: #7c3aed; border-radius: 3px; transition: width 0.7s ease; }
+.conderg-cargo-meta { font-size: 0.7rem; color: #888; }
+.conderg-cargo-total { font-size: 0.82rem; font-weight: 700; color: #7c3aed; margin-top: 0.2rem; }
+
+/* Tabela detalhes CONDERG */
+.conderg-table { font-size: 0.81rem; }
