@@ -915,28 +915,107 @@ document.addEventListener('DOMContentLoaded', () => {
       }));
     }
 
-    // Tabela de detalhes com paginação
-    const detEl = document.getElementById('condergDetBody');
-    const vmBtn = document.getElementById('condergVerMais');
-    if (detEl) {
-      let shown = 100;
-      const renderDet = () => {
-        detEl.innerHTML = d.detalhes.slice(0, shown).map((r, i) => `<tr>
-          <td class="th-s-rank">${i + 1}</td>
-          <td class="sal-nome"><div class="sal-nome-main">${r.nome}</div></td>
-          <td class="sal-cargo">${r.cargo}</td>
-          <td class="sal-cargo" style="color:#555">${r.setor}</td>
-          <td class="sal-bruto">${fmtBR(r.salario)}</td>
-        </tr>`).join('');
-        if (vmBtn) {
-          const left = d.detalhes.length - shown;
-          vmBtn.hidden = left <= 0;
-          vmBtn.textContent = `Ver mais ${Math.min(left, 100)} servidores (${left} restantes)`;
-        }
-      };
-      if (vmBtn) vmBtn.addEventListener('click', () => { shown = Math.min(shown + 100, d.detalhes.length); renderDet(); });
-      renderDet();
+    // ── Filtros e tabela de detalhes ─────────────────────────────────────
+    const detEl     = document.getElementById('condergDetBody');
+    const vmBtn     = document.getElementById('condergVerMais');
+    const searchEl  = document.getElementById('condergSearch');
+    const setorSel  = document.getElementById('condergSetorSel');
+    const cargoSel  = document.getElementById('condergCargoSel');
+    const sortSel   = document.getElementById('condergSortSel');
+    const countEl   = document.getElementById('condergCount');
+    const clearBtn  = document.getElementById('condergClear');
+    const faixaBar  = document.getElementById('condergFaixaSel');
+
+    // Preenche dropdowns de setor e cargo
+    if (setorSel) {
+      const setores = [...new Set(d.detalhes.map(r => r.setor))].sort();
+      setores.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; setorSel.appendChild(o); });
     }
+    if (cargoSel) {
+      const cargos = [...new Set(d.detalhes.map(r => r.cargo))].sort();
+      cargos.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; cargoSel.appendChild(o); });
+    }
+
+    let cQuery = '', cSetor = '', cCargo = '', cFaixa = '', cSort = 'sal', cShown = 100;
+
+    const matchFaixa = (sal, f) => {
+      if (!f) return true;
+      if (f.endsWith('-')) return sal >= parseFloat(f);
+      const [lo, hi] = f.split('-').map(Number);
+      return sal >= lo && sal < hi;
+    };
+
+    const getFiltered = () => {
+      const q = cQuery.toLowerCase();
+      return d.detalhes.filter(r =>
+        (!q || r.nome.toLowerCase().includes(q) || r.cargo.toLowerCase().includes(q)) &&
+        (!cSetor  || r.setor === cSetor) &&
+        (!cCargo  || r.cargo === cCargo) &&
+        matchFaixa(r.salario, cFaixa)
+      ).sort((a, b) => {
+        if (cSort === 'sal')   return b.salario - a.salario;
+        if (cSort === 'nome')  return a.nome.localeCompare(b.nome, 'pt-BR');
+        if (cSort === 'cargo') return a.cargo.localeCompare(b.cargo, 'pt-BR');
+        if (cSort === 'setor') return a.setor.localeCompare(b.setor, 'pt-BR');
+        return 0;
+      });
+    };
+
+    const hasFilters = () => cQuery || cSetor || cCargo || cFaixa || cSort !== 'sal';
+
+    const renderDet = () => {
+      const filtered = getFiltered();
+      const slice = filtered.slice(0, cShown);
+      if (detEl) {
+        detEl.innerHTML = slice.length
+          ? slice.map((r, i) => `<tr>
+              <td class="th-s-rank">${i + 1}</td>
+              <td class="sal-nome"><div class="sal-nome-main">${r.nome}</div></td>
+              <td class="sal-cargo">${r.cargo}</td>
+              <td class="sal-cargo" style="color:#555">${r.setor}</td>
+              <td class="sal-bruto">${fmtBR(r.salario)}</td>
+            </tr>`).join('')
+          : '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:2rem">Nenhum servidor encontrado</td></tr>';
+      }
+      if (countEl) countEl.innerHTML = `<strong>${filtered.length}</strong> servidores`;
+      if (vmBtn) {
+        const left = filtered.length - cShown;
+        vmBtn.hidden = left <= 0;
+        vmBtn.textContent = `Ver mais ${Math.min(left, 100)} servidores (${left} restantes)`;
+      }
+      if (clearBtn) clearBtn.hidden = !hasFilters();
+    };
+
+    const resetAll = () => {
+      cQuery = ''; cSetor = ''; cCargo = ''; cFaixa = ''; cSort = 'sal'; cShown = 100;
+      if (searchEl) searchEl.value = '';
+      if (setorSel) setorSel.value = '';
+      if (cargoSel) cargoSel.value = '';
+      if (sortSel)  sortSel.value  = 'sal';
+      if (faixaBar) { faixaBar.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); faixaBar.querySelector('[data-faixa=""]')?.classList.add('active'); }
+      renderDet();
+    };
+
+    if (searchEl) {
+      searchEl.addEventListener('input', e => { cQuery = e.target.value.trim(); cShown = 100; renderDet(); });
+      searchEl.addEventListener('keydown', e => { if (e.key === 'Escape') { searchEl.value = ''; cQuery = ''; cShown = 100; renderDet(); } });
+    }
+    if (setorSel) setorSel.addEventListener('change', e => { cSetor = e.target.value; cShown = 100; renderDet(); });
+    if (cargoSel) cargoSel.addEventListener('change', e => { cCargo = e.target.value; cShown = 100; renderDet(); });
+    if (sortSel)  sortSel.addEventListener('change',  e => { cSort  = e.target.value; renderDet(); });
+    if (clearBtn) clearBtn.addEventListener('click', resetAll);
+    if (faixaBar) {
+      faixaBar.addEventListener('click', e => {
+        const btn = e.target.closest('.cat-btn');
+        if (!btn) return;
+        faixaBar.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        cFaixa = btn.dataset.faixa; cShown = 100; renderDet();
+      });
+    }
+    if (vmBtn) vmBtn.addEventListener('click', () => { cShown = Math.min(cShown + 100, getFiltered().length); renderDet(); });
+
+    renderDet();
   })();
 
   // ── DESPESAS ─────────────────────────────────────────────────────────

@@ -1808,3 +1808,7 @@
 
 /* Tabela detalhes CONDERG */
 .conderg-table { font-size: 0.81rem; }
+
+/* CONDERG controls bar */
+.conderg-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1rem; }
+.conderg-controls .search-wrap { flex: 1; min-width: 180px; }

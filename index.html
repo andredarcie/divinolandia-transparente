@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css?v=20260522c">
+<link rel="stylesheet" href="css/style.css?v=20260522d">
 </head>
 <body>
 
@@ -555,7 +555,43 @@
     <h3 class="conderg-sub-title">Distribuição por Cargo</h3>
     <div class="conderg-cargo-grid" id="condergCargos"></div>
 
-    <h3 class="conderg-sub-title">Maiores Salários</h3>
+    <h3 class="conderg-sub-title">Servidores</h3>
+
+    <div class="conderg-controls">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" id="condergSearch" placeholder="Buscar nome ou cargo…" autocomplete="off">
+      </div>
+      <select class="sort-select" id="condergSetorSel">
+        <option value="">Todos os setores</option>
+      </select>
+      <select class="sort-select" id="condergCargoSel">
+        <option value="">Todos os cargos</option>
+      </select>
+      <select class="sort-select" id="condergSortSel">
+        <option value="sal">Ordenar: Salário ↓</option>
+        <option value="nome">Ordenar: Nome A→Z</option>
+        <option value="cargo">Ordenar: Cargo A→Z</option>
+        <option value="setor">Ordenar: Setor A→Z</option>
+      </select>
+      <span class="result-count" id="condergCount"></span>
+      <button class="sal-clear-btn" id="condergClear" hidden>✕ Limpar</button>
+    </div>
+
+    <div class="sal-filter-bar" style="margin-top:0.5rem">
+      <div class="sal-filter-group">
+        <span class="sal-filter-label">Faixa salarial</span>
+        <div class="cat-filters" id="condergFaixaSel">
+          <button class="cat-btn active" data-faixa="">Todas</button>
+          <button class="cat-btn" data-faixa="0-2000">Até 2k</button>
+          <button class="cat-btn" data-faixa="2000-4000">2k–4k</button>
+          <button class="cat-btn" data-faixa="4000-8000">4k–8k</button>
+          <button class="cat-btn" data-faixa="8000-15000">8k–15k</button>
+          <button class="cat-btn" data-faixa="15000-">Acima 15k</button>
+        </div>
+      </div>
+    </div>
+
     <div class="salary-table-wrap">
       <table class="salary-table conderg-table">
         <thead>
@@ -594,8 +630,8 @@
   </div>
 </footer>
 
-<script src="js/data.js?v=20260522c"></script>
-<script src="js/utils.js?v=20260522c"></script>
-<script src="js/app.js?v=20260522c"></script>
+<script src="js/data.js?v=20260522d"></script>
+<script src="js/utils.js?v=20260522d"></script>
+<script src="js/app.js?v=20260522d"></script>
 </body>
 </html>
