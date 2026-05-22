@@ -1190,6 +1190,61 @@
     .destaques-grid { grid-template-columns: 1fr; }
   }
 
+
+  /* ── SITE NAV INDEX ───────────────────────────────── */
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #fff;
+    border: 1px solid #E4E4EF;
+    border-radius: 12px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .nav-label {
+    font-size: 0.63rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #aaa;
+    white-space: nowrap;
+  }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #333;
+    background: #F5F5FA;
+    border: 1px solid #E0E0EE;
+    border-radius: 20px;
+    padding: 0.28rem 0.75rem;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-link:hover { background: #1A1A2E; color: #fff; border-color: #1A1A2E; }
+
+  /* ── VER MAIS ─────────────────────────────────────── */
+  .ver-mais-wrap { text-align: center; padding: 1rem 0 0.25rem; }
+  .ver-mais-btn {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1A1A2E;
+    background: #fff;
+    border: 1.5px solid #CACAD8;
+    border-radius: 8px;
+    padding: 0.5rem 1.4rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .ver-mais-btn:hover { background: #F0F0FA; border-color: #9090B8; }
+  .ver-mais-btn.hidden { display: none; }
+
   /* ── DIÁRIAS E VIAGENS ────────────────────────────── */
   .diarias-section { margin-top: 2.5rem; }
 
@@ -1469,9 +1524,20 @@
 
 <!-- MAIN -->
 <main class="main">
+  <!-- NAV INDEX -->
+  <nav class="site-nav fade-in fade-in-1">
+    <span class="nav-label">Ir para</span>
+    <div class="nav-links">
+      <a class="nav-link" href="#sec-destaques"><span>🔍</span> Radar de Gastos</a>
+      <a class="nav-link" href="#sec-credores"><span>🏢</span> Maiores Credores</a>
+      <a class="nav-link" href="#sec-salarios"><span>👤</span> Salários</a>
+      <a class="nav-link" href="#sec-empenhos"><span>🛒</span> Empenhos</a>
+      <a class="nav-link" href="#sec-diarias"><span>✈️</span> Diárias</a>
+    </div>
+  </nav>
 
   <!-- ── DESTAQUES ─────────────────────────────────── -->
-  <section class="destaques-section fade-in fade-in-1">
+  <section class="destaques-section fade-in fade-in-1" id="sec-destaques">
     <div class="destaques-label">Radar de gastos</div>
     <h2 class="destaques-title">O que os dados revelam</h2>
     <p class="destaques-sub">Gastos que chamaram atenção nos dados oficiais de 2025–2026. Clique em qualquer seção abaixo para ver o detalhamento completo.</p>
@@ -1590,6 +1656,7 @@
   </div>
 
   <!-- TABLE SECTION -->
+  <div id="sec-credores"></div>
   <div class="section-head fade-in fade-in-2">
     <div>
       <div class="section-label">Ranking de gastos</div>
@@ -1630,6 +1697,7 @@
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
+    <div class="ver-mais-wrap"><button class="ver-mais-btn" id="vmCredores">Ver todos os 50 credores ↓</button></div>
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🔍</div>
       <div class="empty-text">Nenhum credor encontrado para a busca.</div>
@@ -1637,7 +1705,7 @@
   </div>
 
   <!-- SALARY SECTION -->
-  <section class="salary-section fade-in fade-in-4">
+  <section class="salary-section fade-in fade-in-4" id="sec-salarios">
     <div class="section-head">
       <div>
         <div class="section-label">Remuneração de servidores</div>
@@ -1688,6 +1756,7 @@
         </thead>
         <tbody id="salaryBody"></tbody>
       </table>
+      <div class="ver-mais-wrap"><button class="ver-mais-btn" id="vmSalarios">Ver todos os 493 servidores ↓</button></div>
       <div class="empty-state" id="salaryEmpty">
         <div class="empty-icon">🔍</div>
         <div class="empty-text">Nenhum servidor encontrado.</div>
@@ -1696,7 +1765,7 @@
   </section>
 
   <!-- ── MAIORES EMPENHOS ──────────────────────────────────────────────── -->
-  <section class="empenhos-section fade-in fade-in-4">
+  <section class="empenhos-section fade-in fade-in-4" id="sec-empenhos">
     <div class="section-head">
       <div>
         <div class="section-label">Empenhos e Contratos</div>
@@ -1731,6 +1800,7 @@
         </thead>
         <tbody id="empBody"></tbody>
       </table>
+      <div class="ver-mais-wrap"><button class="ver-mais-btn" id="vmEmpenhos">Ver todos os empenhos ↓</button></div>
       <div class="empty-state" id="empEmpty" style="display:none;">
         <div class="empty-icon">🔍</div>
         <div class="empty-text">Nenhum empenho encontrado.</div>
@@ -1739,7 +1809,7 @@
   </section>
 
   <!-- ── DIÁRIAS E VIAGENS ───────────────────────────── -->
-  <section class="diarias-section fade-in fade-in-4">
+  <section class="diarias-section fade-in fade-in-4" id="sec-diarias">
     <div class="section-head">
       <div>
         <div class="section-label">Adiantamentos de Viagem</div>
@@ -1808,7 +1878,7 @@ function fmtSal(n) {
   return 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
-function renderSalary(data, query = '') {
+function renderSalary(data, query = '', limit = Infinity) {
   const tbody = document.getElementById('salaryBody');
   const empty = document.getElementById('salaryEmpty');
   const counter = document.getElementById('salaryCount');
@@ -1829,7 +1899,7 @@ function renderSalary(data, query = '') {
   empty.classList.remove('visible');
   counter.innerHTML = `<strong>${data.length}</strong> servidor${data.length !== 1 ? 'es' : ''}`;
 
-  tbody.innerHTML = data.map((d, i) => {
+  tbody.innerHTML = slice.map((d, i) => {
     const liq = d.bruto - d.deducoes;
     const barW = (d.bruto / SALARY_MAX * 100).toFixed(1);
     const area = AREA_MAP[d.area] || { label: 'Outros', cls: 'tag-outros' };
@@ -1929,7 +1999,7 @@ let currentData = [...DATA];
 let sortKey = 'emp';
 let searchQuery = '';
 
-function renderTable(data, query = '') {
+function renderTable(data, query = '', limit = Infinity) {
   const tbody = document.getElementById('tableBody');
   const empty = document.getElementById('emptyState');
 
@@ -1942,6 +2012,7 @@ function renderTable(data, query = '') {
 
   empty.classList.remove('visible');
   document.getElementById('resultCount').innerHTML = `<strong>${data.length}</strong> resultado${data.length !== 1 ? 's' : ''}`;
+  const slice = limit < Infinity ? data.slice(0, limit) : data;
 
   function hl(text, q) {
     if (!q) return text;
@@ -1949,7 +2020,8 @@ function renderTable(data, query = '') {
     return text.replace(re, '<mark>$1</mark>');
   }
 
-  tbody.innerHTML = data.map((d, i) => {
+  const salSlice = limit < Infinity ? data.slice(0, limit) : data;
+  tbody.innerHTML = salSlice.map((d, i) => {
     const pct = d.valor_num > 0 ? (parseVal(d.pago) / d.valor_num * 100) : 0;
     const barW = (d.valor_num / MAX_VAL * 100).toFixed(1);
     const barCls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
@@ -2044,10 +2116,39 @@ function updateStats() {
 
 // ── INIT ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // ── PAGINAÇÃO 10 ITENS ────────────────────────────────────────────────────
+  const PAGE_SIZE = 10;
+
+  function withPaging(renderFn, btnId, label) {
+    // renderFn(data, query, limit) renders up to `limit` rows
+    // returns a wrapped function that shows PAGE_SIZE rows and wires the button
+    return function(data, query) {
+      const btn = document.getElementById(btnId);
+      const isExpanded = btn && btn.dataset.expanded === '1';
+      const limit = isExpanded ? Infinity : PAGE_SIZE;
+      renderFn(data, query, limit);
+      if (btn) {
+        if (!data || data.length <= PAGE_SIZE || isExpanded) {
+          btn.classList.add('hidden');
+        } else {
+          btn.classList.remove('hidden');
+          btn.textContent = label + ' ↓';
+          btn.onclick = function() {
+            btn.dataset.expanded = '1';
+            renderFn(data, query, Infinity);
+            btn.classList.add('hidden');
+          };
+        }
+      }
+    };
+  }
+
+
   updateStats();
 
+  const renderTablePaged = withPaging(renderTable, 'vmCredores', 'Ver todos os 50 credores');
   currentData = sortData(DATA, sortKey);
-  renderTable(currentData, searchQuery);
+  renderTablePaged(currentData, searchQuery);
 
   // Search
   const searchInput = document.getElementById('searchInput');
@@ -2055,7 +2156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     searchQuery = searchInput.value.trim();
     const filtered = filterData(DATA, searchQuery);
     currentData = sortData(filtered, sortKey);
-    renderTable(currentData, searchQuery);
+    renderTablePaged(currentData, searchQuery);
   });
 
   // Sort select
@@ -2063,7 +2164,7 @@ document.addEventListener('DOMContentLoaded', () => {
   sortSelect.addEventListener('change', () => {
     sortKey = sortSelect.value;
     currentData = sortData(filterData(DATA, searchQuery), sortKey);
-    renderTable(currentData, searchQuery);
+    renderTablePaged(currentData, searchQuery);
 
     // Update header highlight
     document.querySelectorAll('.data-table thead th').forEach(th => {
@@ -2096,18 +2197,19 @@ document.addEventListener('DOMContentLoaded', () => {
   let sSortKey = 'bruto';
   let sQuery = '';
 
-  renderSalary(sortSalary(SALARY_DATA, sSortKey));
+  const renderSalaryPaged = withPaging(renderSalary, 'vmSalarios', 'Ver todos os 493 servidores');
+  renderSalaryPaged(sortSalary(SALARY_DATA, sSortKey));
 
   const salarySearch = document.getElementById('salarySearch');
   salarySearch.addEventListener('input', () => {
     sQuery = salarySearch.value.trim();
-    renderSalary(sortSalary(filterSalary(SALARY_DATA, sQuery), sSortKey), sQuery);
+    renderSalaryPaged(sortSalary(filterSalary(SALARY_DATA, sQuery), sSortKey), sQuery);
   });
 
   const salarySortSel = document.getElementById('salarySortSelect');
   salarySortSel.addEventListener('change', () => {
     sSortKey = salarySortSel.value;
-    renderSalary(sortSalary(filterSalary(SALARY_DATA, sQuery), sSortKey), sQuery);
+    renderSalaryPaged(sortSalary(filterSalary(SALARY_DATA, sQuery), sSortKey), sQuery);
 
     document.querySelectorAll('.salary-table thead th').forEach(th => {
       th.classList.remove('sorted-sal');
@@ -2159,7 +2261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return s.length > n ? s.slice(0, n) + '…' : s;
   }
 
-  function renderEmpenhos(data, query) {
+  function renderEmpenhos(data, query, limit = Infinity) {
     const body = document.getElementById('empBody');
     const empty = document.getElementById('empEmpty');
     const count = document.getElementById('empCount');
@@ -2182,7 +2284,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     empty.style.display = 'none';
 
-    body.innerHTML = filtered.map(d => {
+    const empSlice = limit < Infinity ? filtered.slice(0, limit) : filtered;
+    body.innerHTML = empSlice.map(d => {
       const catCls = CAT_CLASS[d.categoria] || 'cat-outros';
       const desc = truncate(d.descricao || d.credor, 120);
       const sourceTag = d.fonte && d.fonte.includes('Restos')
@@ -2218,7 +2321,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return activeCat ? EMPENHOS_DATA.filter(d => d.categoria === activeCat) : EMPENHOS_DATA;
     }
 
-    function refresh() { renderEmpenhos(getFiltered(), empQuery); }
+    const renderEmpPaged = withPaging(renderEmpenhos, 'vmEmpenhos', 'Ver todos os empenhos');
+    function refresh() { renderEmpPaged(getFiltered(), empQuery); }
 
     filtersEl.addEventListener('click', e => {
       const btn = e.target.closest('.cat-btn');
