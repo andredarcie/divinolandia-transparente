@@ -640,6 +640,20 @@
   }
   .sal-filter-bar .cat-filters { margin: 0; gap: 0.3rem; }
 
+  .sal-clear-btn {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #c0392b;
+    background: #FFF0EE;
+    border: 1px solid #F5C6C2;
+    border-radius: 6px;
+    padding: 0.28rem 0.7rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .sal-clear-btn:hover { background: #FFE0DC; }
+
   /* ── AREA PIE CHART ─────────────────────────────────── */
   .area-chart-wrap {
     display: flex;

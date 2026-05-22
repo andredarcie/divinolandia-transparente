@@ -398,8 +398,30 @@ document.addEventListener('DOMContentLoaded', () => {
       return result;
     }
 
+    const clearBtn    = document.getElementById('salClearFilters');
+    const salarySearch = document.getElementById('salarySearch');
+    const salarySortSel = document.getElementById('salarySortSelect');
+    const faixaSel    = document.getElementById('salaryFaixaSelect');
+    const tipoFiltersEl = document.getElementById('salaryTipoFilters');
+
+    function isFiltered() {
+      return sArea || sTipo || sFaixa || sQuery;
+    }
+
     function refresh() {
       renderSalaryPaged(sortSalary(getFiltered(), sSortKey), sQuery);
+      clearBtn.hidden = !isFiltered();
+    }
+
+    function resetAll() {
+      sArea = ''; sTipo = ''; sFaixa = ''; sQuery = '';
+      salarySearch.value  = '';
+      faixaSel.value      = '';
+      [areaFiltersEl, tipoFiltersEl].forEach(el => {
+        el.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        el.querySelector('[data-sarea=""], [data-stipo=""]')?.classList.add('active');
+      });
+      refresh();
     }
 
     function wireChips(el, dataAttr, setter) {
@@ -414,19 +436,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     wireChips(areaFiltersEl, 'sarea', v => { sArea = v; });
-    wireChips(document.getElementById('salaryTipoFilters'), 'stipo', v => { sTipo = v; });
+    wireChips(tipoFiltersEl, 'stipo', v => { sTipo = v; });
 
-    document.getElementById('salaryFaixaSelect').addEventListener('change', e => {
-      sFaixa = e.target.value;
-      refresh();
-    });
+    faixaSel.addEventListener('change', e => { sFaixa = e.target.value; refresh(); });
+    salarySearch.addEventListener('input', e => { sQuery = e.target.value.trim(); refresh(); });
+    clearBtn.addEventListener('click', resetAll);
 
-    document.getElementById('salarySearch').addEventListener('input', e => {
-      sQuery = e.target.value.trim();
-      refresh();
-    });
-
-    const salarySortSel = document.getElementById('salarySortSelect');
     salarySortSel.addEventListener('change', () => {
       sSortKey = salarySortSel.value;
       refresh();
