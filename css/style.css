@@ -1560,3 +1560,50 @@
     border-radius: 2px;
     padding: 0 1px;
   }
+
+  /* ── REDUCED MOTION ───────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ── PRINT ────────────────────────────────────────── */
+  @media print {
+    .legal-banner, .site-nav, .salary-controls, .controls,
+    .sal-filter-bar, .ver-mais-wrap, .sal-export-btn, .sal-clear-btn,
+    .cat-filters, .search-wrap, .sort-select, .demo-notice,
+    .salary-bar-track, .bar-track, .pessoa-bar-track { display: none !important; }
+
+    body { background: #fff; color: #000; font-size: 11pt; }
+
+    .main { padding: 0; max-width: 100%; }
+
+    .salary-table, .data-table, .emp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+    .salary-table td, .salary-table th,
+    .data-table  td, .data-table  th,
+    .emp-table   td, .emp-table   th {
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+    }
+
+    /* show all hidden columns when printing */
+    .salary-table thead th.th-s-sec,
+    .salary-table tbody td:nth-child(4),
+    .salary-table thead th.th-s-dedu,
+    .salary-table tbody td:nth-child(6),
+    .data-table thead th.th-pago,
+    .data-table tbody td:nth-child(6),
+    .data-table thead th.th-pct,
+    .data-table tbody td:nth-child(7) { display: table-cell !important; }
+
+    .fade-in, .fade-row { opacity: 1 !important; animation: none !important; }
+
+    section, .section-head { page-break-inside: avoid; }
+  }
