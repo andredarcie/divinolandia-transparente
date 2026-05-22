@@ -247,6 +247,69 @@ function renderEmpenhos(data, query, limit = Infinity) {
   }).join('');
 }
 
+// ── SALARY STATS ─────────────────────────────────────
+const SALARIO_MINIMO = 1518;
+
+function renderSalaryStats(data) {
+  const el = document.getElementById('salStats');
+  if (!el) return;
+
+  const folha = data.filter(d => d.tipo === 'Folha Mensal');
+  const n = folha.length;
+  if (n === 0) { el.innerHTML = ''; return; }
+
+  const brutos  = folha.map(d => d.bruto).sort((a, b) => a - b);
+  const total   = brutos.reduce((s, v) => s + v, 0);
+  const media   = total / n;
+  const mediana = n % 2 === 0
+    ? (brutos[n / 2 - 1] + brutos[n / 2]) / 2
+    : brutos[Math.floor(n / 2)];
+  const abaixoMin = brutos.filter(v => v < SALARIO_MINIMO).length;
+
+  const fmt = v => v >= 1e6
+    ? 'R$ ' + (v / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' M'
+    : fmtBR(v);
+
+  const cards = [
+    { label: 'Folha mensal (bruto)',  value: fmt(total),          sub: `${n} servidores ativos`                                         },
+    { label: 'Média bruto',           value: fmtBR(media),        sub: `${(media / SALARIO_MINIMO).toFixed(1)} salários mínimos`          },
+    { label: 'Mediana bruto',         value: fmtBR(mediana),      sub: `Metade ganha acima desse valor`                                  },
+    { label: 'Abaixo do mínimo',      value: `${abaixoMin}`,      sub: `Menos de R$${SALARIO_MINIMO.toLocaleString('pt-BR')}/mês`, alert: true },
+  ];
+
+  el.innerHTML = cards.map(c => `
+    <div class="sal-stat-card${c.alert ? ' sc-alert' : ''}">
+      <span class="sal-stat-label">${c.label}</span>
+      <span class="sal-stat-value">${c.value}</span>
+      <span class="sal-stat-sub">${c.sub}</span>
+    </div>`).join('');
+}
+
+// ── EXPORT CSV ────────────────────────────────────────
+function exportSalaryCSV(data) {
+  const BOM = '﻿';
+  const headers = ['Nome', 'Cargo', 'Área', 'Secretaria', 'Bruto', 'Deduções', 'Líquido', 'Tipo'];
+  const rows = data.map(d => [
+    d.nome,
+    d.cargo,
+    (AREA_MAP[d.area] || {}).label || d.area,
+    d.secretaria,
+    d.bruto.toFixed(2).replace('.', ','),
+    d.deducoes.toFixed(2).replace('.', ','),
+    (d.bruto - d.deducoes).toFixed(2).replace('.', ','),
+    d.tipo,
+  ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(';'));
+
+  const csv = BOM + [headers.join(';'), ...rows].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'salarios-divinolandia.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ── AREA PIE CHART ───────────────────────────────────
 const AREA_COLORS = {
   exec:   '#1565C0',
@@ -261,16 +324,21 @@ function renderAreaChart() {
   const el = document.getElementById('areaChart');
   if (!el) return;
 
-  const counts = {};
-  SALARY_DATA.forEach(d => { counts[d.area] = (counts[d.area] || 0) + 1; });
+  const agg = {};
+  SALARY_DATA.forEach(d => {
+    if (!agg[d.area]) agg[d.area] = { count: 0, sum: 0 };
+    agg[d.area].count++;
+    agg[d.area].sum += d.bruto;
+  });
   const total = SALARY_DATA.length;
 
-  const slices = Object.entries(counts)
-    .sort((a, b) => b[1] - a[1])
-    .map(([area, count]) => ({
+  const slices = Object.entries(agg)
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([area, { count, sum }]) => ({
       area,
       count,
-      pct: count / total * 100,
+      pct:   count / total * 100,
+      media: sum / count,
       label: (AREA_MAP[area] || {}).label || area,
       color: AREA_COLORS[area] || '#999',
     }));
@@ -313,6 +381,7 @@ function renderAreaChart() {
       <span class="ac-lbl">${s.label}</span>
       <span class="ac-count">${s.count}</span>
       <span class="ac-pct">${s.pct.toFixed(1)}%</span>
+      <span class="ac-media" title="Média bruto">${fmtBR(s.media)}</span>
     </div>`).join('');
 
   el.innerHTML = `<div class="ac-chart">${svg}</div><div class="ac-legend">${legend}</div>`;
@@ -409,7 +478,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function refresh() {
-      renderSalaryPaged(sortSalary(getFiltered(), sSortKey), sQuery);
+      const filtered = getFiltered();
+      renderSalaryPaged(sortSalary(filtered, sSortKey), sQuery);
+      renderSalaryStats(filtered);
       clearBtn.hidden = !isFiltered();
     }
 
@@ -441,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
     faixaSel.addEventListener('change', e => { sFaixa = e.target.value; refresh(); });
     salarySearch.addEventListener('input', e => { sQuery = e.target.value.trim(); refresh(); });
     clearBtn.addEventListener('click', resetAll);
+    document.getElementById('salExportBtn').addEventListener('click', () => exportSalaryCSV(getFiltered()));
 
     salarySortSel.addEventListener('change', () => {
       sSortKey = salarySortSel.value;

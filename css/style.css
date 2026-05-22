@@ -640,6 +640,56 @@
   }
   .sal-filter-bar .cat-filters { margin: 0; gap: 0.3rem; }
 
+  /* ── SALARY STATS ───────────────────────────────────── */
+  .sal-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .sal-stat-card {
+    background: #fff;
+    border: 1px solid #E4E4EF;
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .sal-stat-card.sc-alert { border-color: #F5C6C2; background: #FFF8F7; }
+  .sal-stat-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+  .sal-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1A1A2E;
+    font-variant-numeric: tabular-nums;
+  }
+  .sal-stat-card.sc-alert .sal-stat-value { color: #c0392b; }
+  .sal-stat-sub {
+    font-size: 0.68rem;
+    color: #888;
+  }
+
+  .sal-export-btn {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #1A1A2E;
+    background: #F0F0FA;
+    border: 1px solid #CACAD8;
+    border-radius: 6px;
+    padding: 0.28rem 0.7rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .sal-export-btn:hover { background: #E0E0F0; }
+
   .sal-clear-btn {
     font-size: 0.72rem;
     font-weight: 600;
@@ -677,7 +727,8 @@
   .ac-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .ac-lbl { flex: 1; color: #333; }
   .ac-count { font-weight: 700; color: #1A1A2E; min-width: 28px; text-align: right; }
-  .ac-pct { color: #888; min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+  .ac-pct   { color: #888; min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+  .ac-media { color: #555; min-width: 80px; text-align: right; font-variant-numeric: tabular-nums; font-size: 0.75rem; }
 
   .salary-table-wrap {
     background: var(--white);
