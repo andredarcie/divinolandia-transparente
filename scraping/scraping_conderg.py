@@ -183,7 +183,7 @@ def main():
         "por_setor":   setor_list,
         "por_cargo":   cargo_list,
         "faixas":      [{"faixa": k, "count": v} for k, v in faixas.items()],
-        "detalhes":    detalhes[:200],  # top 200 por salário
+        "detalhes":    detalhes,
     }
 
     path = os.path.join(OUTPUT_DIR, "salarios_conderg.json")

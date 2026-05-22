@@ -915,16 +915,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }));
     }
 
-    // Tabela de detalhes
+    // Tabela de detalhes com paginação
     const detEl = document.getElementById('condergDetBody');
+    const vmBtn = document.getElementById('condergVerMais');
     if (detEl) {
-      detEl.innerHTML = d.detalhes.map((r, i) => `<tr>
-        <td class="th-s-rank">${i + 1}</td>
-        <td class="sal-nome"><div class="sal-nome-main">${r.nome}</div></td>
-        <td class="sal-cargo">${r.cargo}</td>
-        <td class="sal-cargo" style="color:#555">${r.setor}</td>
-        <td class="sal-bruto">${fmtBR(r.salario)}</td>
-      </tr>`).join('');
+      let shown = 100;
+      const renderDet = () => {
+        detEl.innerHTML = d.detalhes.slice(0, shown).map((r, i) => `<tr>
+          <td class="th-s-rank">${i + 1}</td>
+          <td class="sal-nome"><div class="sal-nome-main">${r.nome}</div></td>
+          <td class="sal-cargo">${r.cargo}</td>
+          <td class="sal-cargo" style="color:#555">${r.setor}</td>
+          <td class="sal-bruto">${fmtBR(r.salario)}</td>
+        </tr>`).join('');
+        if (vmBtn) {
+          const left = d.detalhes.length - shown;
+          vmBtn.hidden = left <= 0;
+          vmBtn.textContent = `Ver mais ${Math.min(left, 100)} servidores (${left} restantes)`;
+        }
+      };
+      if (vmBtn) vmBtn.addEventListener('click', () => { shown = Math.min(shown + 100, d.detalhes.length); renderDet(); });
+      renderDet();
     }
   })();
 
