@@ -247,6 +247,77 @@ function renderEmpenhos(data, query, limit = Infinity) {
   }).join('');
 }
 
+// ── AREA PIE CHART ───────────────────────────────────
+const AREA_COLORS = {
+  exec:   '#1565C0',
+  adm:    '#6A1B9A',
+  saude2: '#1B5E20',
+  edu2:   '#E65100',
+  eng:    '#BF360C',
+  jur:    '#880E4F',
+};
+
+function renderAreaChart() {
+  const el = document.getElementById('areaChart');
+  if (!el) return;
+
+  const counts = {};
+  SALARY_DATA.forEach(d => { counts[d.area] = (counts[d.area] || 0) + 1; });
+  const total = SALARY_DATA.length;
+
+  const slices = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([area, count]) => ({
+      area,
+      count,
+      pct: count / total * 100,
+      label: (AREA_MAP[area] || {}).label || area,
+      color: AREA_COLORS[area] || '#999',
+    }));
+
+  const cx = 100, cy = 100, R = 88, ri = 52;
+  const GAP = 1.5;
+
+  function xy(angleDeg, radius) {
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return [cx + radius * Math.cos(rad), cy + radius * Math.sin(rad)];
+  }
+
+  function donutPath(a0, a1) {
+    const [ox1, oy1] = xy(a0, R);
+    const [ox2, oy2] = xy(a1, R);
+    const [ix2, iy2] = xy(a1, ri);
+    const [ix1, iy1] = xy(a0, ri);
+    const large = a1 - a0 > 180 ? 1 : 0;
+    return `M${ox1} ${oy1} A${R} ${R} 0 ${large} 1 ${ox2} ${oy2} L${ix2} ${iy2} A${ri} ${ri} 0 ${large} 0 ${ix1} ${iy1}Z`;
+  }
+
+  let angle = 0;
+  const paths = slices.map(s => {
+    const sweep = s.pct / 100 * 360;
+    const a0 = angle + GAP / 2;
+    const a1 = angle + sweep - GAP / 2;
+    angle += sweep;
+    return `<path d="${donutPath(a0, a1)}" fill="${s.color}"/>`;
+  });
+
+  const svg = `<svg viewBox="0 0 200 200" width="160" height="160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    ${paths.join('')}
+    <text x="100" y="95"  text-anchor="middle" font-size="22" font-weight="700" fill="#1A1A2E" font-family="inherit">${total}</text>
+    <text x="100" y="112" text-anchor="middle" font-size="9"  fill="#888"        font-family="inherit">servidores</text>
+  </svg>`;
+
+  const legend = slices.map(s => `
+    <div class="ac-legend-row">
+      <span class="ac-dot" style="background:${s.color}"></span>
+      <span class="ac-lbl">${s.label}</span>
+      <span class="ac-count">${s.count}</span>
+      <span class="ac-pct">${s.pct.toFixed(1)}%</span>
+    </div>`).join('');
+
+  el.innerHTML = `<div class="ac-chart">${svg}</div><div class="ac-legend">${legend}</div>`;
+}
+
 // ── SORT HEADER HELPER ───────────────────────────────
 function updateSortHeader(tableSelector, key, colMap, activeClass) {
   document.querySelectorAll(`${tableSelector} thead th`).forEach(th => {
@@ -295,29 +366,83 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Salários
-  let sSortKey = 'bruto';
-  let sQuery   = '';
-  const renderSalaryPaged = withPaging(renderSalary, 'vmSalarios', 'Ver todos os 493 servidores');
-  renderSalaryPaged(sortSalary(SALARY_DATA, sSortKey));
-
-  document.getElementById('salarySearch').addEventListener('input', e => {
-    sQuery = e.target.value.trim();
-    renderSalaryPaged(sortSalary(filterSalary(SALARY_DATA, sQuery), sSortKey), sQuery);
-  });
-
-  const salarySortSel = document.getElementById('salarySortSelect');
-  salarySortSel.addEventListener('change', () => {
-    sSortKey = salarySortSel.value;
-    renderSalaryPaged(sortSalary(filterSalary(SALARY_DATA, sQuery), sSortKey), sQuery);
-    updateSortHeader('.salary-table', sSortKey, { bruto: 5, liq: 7 }, 'sorted-sal');
-  });
-
-  document.querySelectorAll('th[data-ssort]').forEach(th => {
-    th.addEventListener('click', () => {
-      salarySortSel.value = th.dataset.ssort;
-      salarySortSel.dispatchEvent(new Event('change'));
+  (function initSalarios() {
+    const areaFiltersEl = document.getElementById('salaryAreaFilters');
+    Object.entries(AREA_MAP).forEach(([key, val]) => {
+      const btn = document.createElement('button');
+      btn.className   = 'cat-btn';
+      btn.dataset.sarea = key;
+      btn.textContent = val.label;
+      areaFiltersEl.appendChild(btn);
     });
-  });
+
+    let sSortKey = 'bruto';
+    let sQuery   = '';
+    let sArea    = '';
+    let sTipo    = '';
+    let sFaixa   = '';
+
+    const renderSalaryPaged = withPaging(renderSalary, 'vmSalarios', 'Ver todos os 493 servidores');
+
+    function getFiltered() {
+      let result = SALARY_DATA;
+      if (sArea) result = result.filter(d => d.area === sArea);
+      if (sTipo) result = result.filter(d => d.tipo === sTipo);
+      if (sFaixa) {
+        const [minStr, maxStr] = sFaixa.split('-');
+        const min = Number(minStr);
+        const max = maxStr ? Number(maxStr) : Infinity;
+        result = result.filter(d => d.bruto >= min && d.bruto < max);
+      }
+      if (sQuery) result = filterSalary(result, sQuery);
+      return result;
+    }
+
+    function refresh() {
+      renderSalaryPaged(sortSalary(getFiltered(), sSortKey), sQuery);
+    }
+
+    function wireChips(el, dataAttr, setter) {
+      el.addEventListener('click', e => {
+        const btn = e.target.closest('.cat-btn');
+        if (!btn) return;
+        el.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setter(btn.dataset[dataAttr] || '');
+        refresh();
+      });
+    }
+
+    wireChips(areaFiltersEl, 'sarea', v => { sArea = v; });
+    wireChips(document.getElementById('salaryTipoFilters'), 'stipo', v => { sTipo = v; });
+
+    document.getElementById('salaryFaixaSelect').addEventListener('change', e => {
+      sFaixa = e.target.value;
+      refresh();
+    });
+
+    document.getElementById('salarySearch').addEventListener('input', e => {
+      sQuery = e.target.value.trim();
+      refresh();
+    });
+
+    const salarySortSel = document.getElementById('salarySortSelect');
+    salarySortSel.addEventListener('change', () => {
+      sSortKey = salarySortSel.value;
+      refresh();
+      updateSortHeader('.salary-table', sSortKey, { bruto: 5, liq: 7 }, 'sorted-sal');
+    });
+
+    document.querySelectorAll('th[data-ssort]').forEach(th => {
+      th.addEventListener('click', () => {
+        salarySortSel.value = th.dataset.ssort;
+        salarySortSel.dispatchEvent(new Event('change'));
+      });
+    });
+
+    renderAreaChart();
+    refresh();
+  })();
 
   // Empenhos
   (function initEmpenhos() {
